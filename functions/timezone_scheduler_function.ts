@@ -157,11 +157,9 @@ export default SlackFunction(
       );
       calendarEndTime = Math.floor(endTimeUser.getTime() / 1000);
     } catch (error) {
-      console.error("Error converting time:", error);
-      readableTimeOrigin = "Error converting time";
-      readableTimeParticipant = "Error converting time";
-      calendarMeetingTime = null;
-      calendarEndTime = null;
+      return {
+        error: `Error converting time: ${error.message}`,
+      };
     }
 
     return {
