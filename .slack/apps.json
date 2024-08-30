@@ -1,0 +1,10 @@
+{
+  "apps": {
+    "T05656DHAKU": {
+      "app_id": "A07JT394EKV",
+      "team_domain": "slack-ext-workshops",
+      "team_id": "T05656DHAKU"
+    }
+  },
+  "default": "slack-ext-workshops"
+}

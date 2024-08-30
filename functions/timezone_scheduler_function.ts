@@ -103,23 +103,11 @@ export default SlackFunction(
         throw new Error("Invalid DateTime format from API.");
       }
 
-      // Step 2: Extract timezone offset from user_timezone
-      const timezoneMatch = user_timezone?.match(/GMT([+-]\d+)/);
-      if (!timezoneMatch) {
-        throw new Error("Invalid user timezone format");
-      }
-      const userOffset = timezoneMatch[1];
-
-      // Correct handling for Etc/GMT offset (invert the sign)
-      const userOffsetTimezone = `Etc/GMT${
-        userOffset.startsWith("+") ? "-" : "+"
-      }${userOffset.slice(1)}`;
-
-      // Step 3: Convert meeting_time from from_timezone to user timezone
+      // Step 2: Convert meeting_time from from_timezone to user timezone
       const calendarConversionResult = await convertTimeZone(
         from_timezone,
         formattedMeetingTime,
-        userOffsetTimezone,
+        user_timezone,
       );
 
       if (
@@ -134,7 +122,7 @@ export default SlackFunction(
       );
       calendarMeetingTime = Math.floor(userTimeZoneDate.getTime() / 1000);
 
-      // Step 4: Calculate readable times
+      // Step 3: Calculate readable times
       const originTime = new Date(meeting_time);
       readableTimeOrigin = originTime.toLocaleString("en-US", {
         hour: "numeric",
@@ -151,7 +139,7 @@ export default SlackFunction(
         hour12: true,
       });
 
-      // Step 5: Calculate end time for user
+      // Step 4: Calculate end time for user
       const endTimeUser = new Date(
         userTimeZoneDate.getTime() + duration_minutes * 60000,
       );
@@ -161,6 +149,13 @@ export default SlackFunction(
         error: `Error converting time: ${error.message}`,
       };
     }
+
+    console.log("outputs", {
+      readableTimeOrigin,
+      readableTimeParticipant,
+      calendarMeetingTime,
+      calendarEndTime,
+    });
 
     return {
       outputs: {
